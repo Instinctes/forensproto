@@ -1,0 +1,41 @@
+name: CI
+
+# Läuft bei jedem Push und Pull Request auf main. Fängt genau die Art
+# stiller Verhaltens-Regression ab, die zuvor unbemerkt durchrutschte
+# (kompiliert, aber Logik kaputt): Typecheck + Lint + Unit-Tests.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Ältere Läufe desselben Branch abbrechen, sobald ein neuer startet.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck · Lint · Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Abhängigkeiten installieren (reproduzierbar)
+        run: npm ci
+
+      - name: Typecheck (tsc)
+        run: npx tsc --noEmit
+
+      - name: Lint (eslint)
+        run: npm run lint
+
+      - name: Unit-Tests (vitest)
+        run: npm test
