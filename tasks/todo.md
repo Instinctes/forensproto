@@ -9,7 +9,7 @@
 - [x] `package.json` → `forensproto`, Scripts auf `127.0.0.1`
 - [x] Setup-Banner + ehrlicher Health-Chip, neutrales Profil
 - [x] i18n DE↔EN Restlücken (PHRASES + hartes Englisch in Quelle)
-- [ ] Repo anlegen und ersten sauberen Commit pushen
+- [x] Repo angelegt und gepusht: https://github.com/Instinctes/forensproto
 
 ### Review
 `tmp_bwa/*.dat` und `.env.local` bewusst nicht gelöscht — nur ausgeschlossen. Nächster Schritt: kuratiertes Initial-Commit, kein `git add .` der alten Working Copy ohne Status-Check.
