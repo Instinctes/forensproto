@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!--
+    Signing-ready Entitlements für ForensProto (Hardened Runtime).
+    Aktuell wird die App unsigniert ausgeliefert; sobald ein Apple-Developer-
+    Zertifikat vorliegt, greifen diese Rechte bei `codesign --options runtime`.
+
+    ForensProto startet lokale Kindprozesse (npm/node, hashcat, python3,
+    ollama) und kommuniziert lokal über HTTP (127.0.0.1). Es lädt keine
+    ungeprüften Plug-ins und benötigt daher keine weitreichenden Ausnahmen.
+  -->
+
+  <!-- Lokale Netzwerk-Kommunikation zum eingebetteten Next.js-Server. -->
+  <key>com.apple.security.network.client</key>
+  <true/>
+  <key>com.apple.security.network.server</key>
+  <true/>
+
+  <!--
+    Erlaubt das Starten/Ausführen der externen Toolchain (node, hashcat,
+    python3, ollama), die über Homebrew installiert wird und nicht Teil des
+    signierten App-Bundles ist. Ohne diese Ausnahme würde die Library-
+    Validation das Nachladen fremd-signierter Bibliotheken durch Kindprozesse
+    unter Hardened Runtime blockieren.
+  -->
+  <key>com.apple.security.cs.disable-library-validation</key>
+  <true/>
+  <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+  <true/>
+
+  <!-- Node.js/V8 benötigen ausführbaren JIT-Speicher. -->
+  <key>com.apple.security.cs.allow-jit</key>
+  <true/>
+  <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+  <true/>
+</dict>
+</plist>

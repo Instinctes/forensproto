@@ -1,0 +1,1 @@
+{"default":{"identifier":"default","description":"Standardrechte für die ForensProto-Fenster (Splash + Hauptfenster, Fensterverwaltung). Die eigentliche Anwendungslogik läuft ausschließlich im Next.js-Server/Browser-Kontext, nicht über Tauri-JS-APIs — daher genügt das core:default-Rechtebündel.","local":true,"windows":["splash","main"],"permissions":["core:default"]}}

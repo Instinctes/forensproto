@@ -1,0 +1,28 @@
+[package]
+name = "forensproto"
+version = "1.0.0"
+description = "ForensProto – lokale DFIR- & Krypto-Wallet-Recovery-Plattform (natives Fenster)"
+edition = "2021"
+rust-version = "1.77"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# "devtools": Web-Inspector auch im Release-Build (Rechtsklick → Element-
+# Informationen). Bewusst aktiviert, solange der Weißbild-Bug der WebView
+# untersucht wird — bei Bedarf später wieder entfernen.
+tauri = { version = "2", features = ["devtools"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[[bin]]
+name = "forensproto"
+path = "src/main.rs"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

@@ -1,0 +1,19 @@
+name: Feature
+description: A scoped improvement
+title: "[feat] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: What user problem does this solve? Core, lite, or research?
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: Concrete behaviour. Not “make recovery better”.
+    validations:
+      required: true

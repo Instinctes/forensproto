@@ -1,6 +1,12 @@
 # Brain.md — Projektgedächtnis ForensProto
 
-Letzte Aktualisierung: 2026-08-01
+Letzte Aktualisierung: 2026-08-16
+
+## Open-Source-Aufräumen (instinctes/forensproto)
+
+[2026-08-16] [Entscheidung] — Repo für GitHub `instinctes/forensproto` vorbereitet. MIT + Acceptable-Use. Server-Scripts binden `127.0.0.1`. UI-Default-Locale EN. 301-MB-Wortliste und interne Bewertungs-/Phasen-Docs entfernt. `tmp_bwa/*.dat` bleiben lokal und sind gitignored.
+
+[2026-08-16] [Fortschritt] — i18n-Lücken geschlossen: hartes Englisch in DE-Quelle (Settings, Seed, AI-Rules, Extensions, Advanced-Analysis, Recovery-Fehler) auf Deutsch umgestellt; AutoTranslate-PHRASES/PATTERNS um die restlichen DE→EN-Treffer ergänzt. DE-Tagline „Passwort-Wiederherstellung“.
 
 ## Recovery Exit 255 (Hashcat Apple Silicon)
 
@@ -25,6 +31,28 @@ Letzte Aktualisierung: 2026-08-01
 ## Test-Fundament (Vitest)
 
 [2026-08-01] [Fortschritt] — Erstes automatisiertes Testfundament (vorher: null Tests — Ursache, dass der Hashcat-Regressionsbug still durchrutschte). Vitest als devDep, `npm test` (= `vitest run`), `vitest.config.ts` (node-env, `@/*`-Alias). Tests unter `test/` (aus tsconfig+next-Build ausgeschlossen). Suites: `visual-key.test.ts` (secp256k1-Referenzvektoren privkey=1 → kanonische WIF/Pubkeys/Adressen inkl. BIP173 bc1qw508…, CL-1-Determinismus + Range), `shamir.test.ts` (k-of-n Round-Trip + <k schlägt fehl + Serialisierung), `seed-recovery.test.ts` (BIP39-TREZOR-Seed-Vektor, BIP32-Pfad-Ableitung), `hashcat-args.test.ts` (Regressions-Schutz: buildArgs/selfTestArgs enthalten `--self-test-disable`; backendArgs-Overrides), `audit-log.test.ts` (Hashketten-Aufbau + Tamper-Detection über db.append). Erwartungswerte gegen echte Referenzvektoren verifiziert (node --experimental-strip-types / CJS-Harness). CLAUDE.md DoD: Testbefehl eingetragen.
+
+## Wertsteigerung: Forensik-Tests, Attestierung, Fall-Dossier
+
+[2026-08-04] [Fortschritt] — Drei Werttreiber (schließen die im Asset-Valuation genannten Deckel):
+- **Forensik-Tests ausgeweitet** (test/): nonce-recovery (ECDSA-Nonce-Reuse rekonstruiert privaten Schlüssel gegen exakten Vektor), multisig (2-of-3 P2SH `33hG2q…`/P2WSH `bc1qztp0…`, Parsing, assessMultisigRecovery), descriptor (wpkh/pkh/sh), ec-engine (Generator on-curve, modInverse, getOppositeS=n−s), signature-analyzer (Low-S/Malleability, validRange). Alle Erwartungswerte via node gegen echte Modul-Ausgabe verifiziert. Gesamt jetzt 12 Test-Suiten.
+- **Ergebnis-Attestierung** (`src/lib/attestation.ts`, API `/api/recovery/attest`): gefundenes Passwort wird via `dumpEncryptedWallet` (mkey→AES-CBC→secp256k1-Abgleich) geprüft, Ergebnis Ed25519-signiert. Geheimnis NICHT gespeichert (nur SHA-256-Commitment). `verifyAttestation` erkennt Manipulation. Verifiziert.
+- **Signiertes Fall-Dossier** (`src/lib/dossier.ts`, API `/api/cases/[caseId]/dossier`, Button auf /cases): bündelt Fall-Metadaten + Asservat-Integrität + Chain-of-Custody + Audit-Hashketten-Verifikation + Attestierungen in ein Ed25519-signiertes, unabhängig prüfbares Bundle (JSON + Textbericht). GET (?format=text) + POST {verify}. Sign/Verify-Kern identisch zur verifizierten Attestierung.
+- Roadmap: `tasks/WERT_ROADMAP_DE.md`.
+
+## Visual-Key Balance-Check: Offline statt Live-API
+
+[2026-08-04] [Entscheidung] — Live-Balance-Prüfung gegen mempool.space (Rate-Limit) durch OFFLINE-Prüfung gegen die lokale `funded-set/btcadresseswithbalance.txt` ersetzt (`src/lib/funded-lookup.ts`: ein Streaming-Durchlauf, Early-Exit sobald alle wenigen Adressen gefunden; Satoshi-Ganzzahl → BTC). `/api/visual-key/check` hat jetzt `checkBalance`-Flag: Default `false` = nur Schlüsselableitung, rein lokal, KEIN Netzwerk (Live-Anzeige ohne Rate-Limit); `true` = Offline-Datei-Abgleich. Frontend: Live-Effekt setzt keine Balance mehr, neuer Button „Offline gegen Adressdatei prüfen" löst den Abgleich aus. mempool-Explorer-LINKS bleiben (sind nur Links, keine API). Verdict-Texte auf Listen-Semantik umgestellt (Treffer/nicht in Liste). i18n DE/EN aktualisiert. Logik gegen synthetische Datei verifiziert.
+
+## Build-Architekturen (Intel/Universal)
+
+[2026-08-04] [Fortschritt] — `install-forensproto-macos.sh` unterstützt jetzt Zielarchitekturen: `--intel` (x86_64-apple-darwin), `--universal` (universal-apple-darwin), `--arch=intel|universal|arm|native`. Installiert die nötigen rustup-Targets (universal = beide), reicht `--target` an `tauri build` durch und liest die .app/.dmg aus `src-tauri/target/<triple>/release/bundle/…`. Bei intel/universal wird die arm64-Plattformprüfung automatisch entsperrt. Restrisiko: der Rust-Teil cross-kompiliert korrekt, aber die mitgebündelten Node-`node_modules` tragen Host-Arch-native-Bits (z. B. sharp) — für einen garantiert korrekten Intel-Build direkt auf einem Intel-Mac bauen.
+
+[2026-08-04] [Bug] — Splash-Endlos-Loop behoben: `main.rs` beendete einen belegten Port nur bei GESUNDEM Alt-Server (check_health true). Der eigentliche Fall (Port belegt, aber kein Health-Marker → neuer node-Start scheitert an EADDRINUSE → Health nie grün) blieb hängen. Fix: neue `port_in_use()` (reiner TCP-Connect); im BUNDLED-Modus wird der dedizierte Port jetzt unabhängig von „gesund" geräumt; Kill-Warteschleife wartet auf port_in_use==false.
+
+## Vanity-Adress-Generator (/vanity)
+
+[2026-08-04] [Fortschritt] — Neues Feature in der Forensik-Gruppe (neben Visual Key): Bitcoin-Wunschadressen mit wählbarem Präfix. `src/lib/vanity.ts` erzeugt Schlüssel ausschließlich per `crypto.randomBytes` (CSPRNG — NIE Math.random) mit Skalar-Range-Prüfung [1,n-1], leitet nur den gesuchten Adresstyp ab (p2pkh/p2sh-p2wpkh/p2wpkh via encodeSegwitAddress+hash160) und läuft als stoppbarer Hintergrund-Job mit Fortschritt (Modul-global, Muster wie pattern-scan). `validatePrefix()` prüft festen Anfang (1/3/bc1q), Base58-Verbotszeichen (0,O,I,l) bzw. Bech32-Charset und schätzt den Aufwand (58^n bzw. 32^n; case-insensitive ≈33^n). API `/api/vanity` (validate/start/status/stop), UI `/vanity` mit vollem Schlüsselmaterial (privHex, WIF compr/uncompr, Pubkey) + Backup-Warnung. i18n DE/EN, Sidebar-Eintrag. Verifiziert: echter Suchlauf fand `1AFsMM…`, privkey→Adresse und WIF unabhängig gegengeprüft; alle Validierungs-Vektoren OK. Test: `test/vanity.test.ts`.
 
 ## Architektur (Kurzfassung)
 

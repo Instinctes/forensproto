@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -23,15 +21,50 @@
 # misc
 .DS_Store
 *.pem
+*.orig
 
-# debug
+# debug / local scratch
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+lint_output.txt
+tsc_output.txt
+hc_out.txt
+hc_err.txt
+*.patch
 
-# env files (can opt-in for committing if needed)
-.env*
+# env — never commit real secrets (use .env.example)
+.env
+.env.*
+!.env.example
+
+# runtime / user data
+/.forensproto
+/uploads/*
+!/uploads/.gitkeep
+/tmp
+/tmp_bwa
+/funded-set
+
+# local wordlists (keep the tiny shipped example)
+/wordlists/*
+!/wordlists/README.md
+!/wordlists/example.txt
+
+# generated hashcat rules (keep a placeholder if present)
+/rules/*
+!/rules/.gitkeep
+
+# wallets / key material / evidence — never publish
+*.dat
+*.wallet
+*.keys
+wallet.dat
+
+# Tauri native app: Rust build output + generated bundle resources
+/src-tauri/target
+/src-tauri/resources
 
 # vercel
 .vercel

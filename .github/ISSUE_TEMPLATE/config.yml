@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/instinctes/forensproto/security/advisories/new
+    about: Key leaks, auth bypass, or a reachable local API — not a public issue.
+  - name: Legal / acceptable use
+    url: https://github.com/instinctes/forensproto/blob/main/docs/legal.md
+    about: We do not help recover wallets you are not authorized to access.

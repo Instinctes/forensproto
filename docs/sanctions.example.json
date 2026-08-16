@@ -1,0 +1,6 @@
+[
+  { "type": "name", "value": "Evil Corp LLC", "list": "OFAC-SDN", "ref": "SDN-12345" },
+  { "type": "name", "value": "Lazarus Group", "list": "OFAC-SDN", "ref": "SDN-22887" },
+  { "type": "address", "value": "1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71", "list": "OFAC-SDN", "ref": "XBT-SDN-001" },
+  { "type": "address", "value": "0x7F367cC41522cE07553e823bf3be79A889DEbe1B", "list": "OFAC-SDN", "ref": "ETH-SDN-002" }
+]

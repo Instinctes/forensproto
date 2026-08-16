@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# Lokaler pre-commit-Hook für ForensProto (kein GitHub/CI nötig).
+# ===============================================================
+# Führt vor JEDEM Commit die schnellen Qualitäts-Checks aus und bricht den
+# Commit ab, wenn einer fehlschlägt — fängt genau die stillen
+# Verhaltens-Regressionen ab (kompiliert, aber Logik kaputt).
+#
+# Aktivieren (einmalig):
+#   git config core.hooksPath .githooks
+#   chmod +x .githooks/pre-commit
+#
+# Einen einzelnen Commit ohne Checks erzwingen (Notfall):
+#   git commit --no-verify
+#
+set -e
+
+echo "▶ pre-commit: block secrets / oversized files …"
+# Staged paths only. Wallets, env, and huge dictionaries must never land on GitHub.
+while IFS= read -r -d '' f; do
+  case "$f" in
+    *.dat|*.wallet|*.keys|wallet.dat|.env|.env.local|wordlists/wordlist.txt)
+      echo "✗ refused: $f  (wallet, secret, or bulk wordlist)"
+      exit 1
+      ;;
+  esac
+  if [ -f "$f" ]; then
+    size=$(wc -c < "$f")
+    if [ "$size" -gt 5242880 ]; then
+      echo "✗ refused: $f is ${size} bytes (limit 5 MB). Keep dictionaries and dumps local."
+      exit 1
+    fi
+  fi
+done < <(git diff --cached --name-only -z --diff-filter=ACMR)
+
+echo "▶ pre-commit: Typecheck (tsc) …"
+npx tsc --noEmit
+
+echo "▶ pre-commit: Lint (eslint) …"
+npm run lint
+
+echo "▶ pre-commit: Unit-Tests (vitest) …"
+npm test
+
+echo "✓ pre-commit: alle Checks grün."

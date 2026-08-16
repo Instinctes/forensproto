@@ -1,11 +1,32 @@
 {
-  "name": "alpha-forensic",
+  "name": "forensproto",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "license": "MIT",
+  "description": "Local-first DFIR and crypto-wallet recovery workbench. Hashcat, BIP39, Bitcoin Core — keys never leave your machine.",
+  "author": "instinctes",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/instinctes/forensproto.git"
+  },
+  "homepage": "https://github.com/instinctes/forensproto#readme",
+  "bugs": {
+    "url": "https://github.com/instinctes/forensproto/issues"
+  },
+  "keywords": [
+    "digital-forensics",
+    "dfir",
+    "bitcoin",
+    "wallet-recovery",
+    "hashcat",
+    "bip39",
+    "nextjs",
+    "tauri"
+  ],
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 127.0.0.1",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -H 127.0.0.1",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",

@@ -1,0 +1,28 @@
+name: Bug
+description: Something does not work as documented
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do **not** paste private keys, seeds, potfiles, or wallet files.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Expected vs actual.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: Use synthetic or your own test material only.
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      placeholder: "macOS 15 / Node 22 / Hashcat 6.x (or n/a)"

@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ForensProto
 
-## Getting Started
+**Local-first DFIR and crypto-wallet recovery.** Runs on your machine. Private keys are not uploaded anywhere.
 
-First, run the development server:
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/instinctes/forensproto/ci.yml?branch=main)](https://github.com/instinctes/forensproto/actions)
+[![Node](https://img.shields.io/badge/node-%E2%89%A520-339933)](https://nodejs.org)
+
+> **Lawful use only.** Recover your own data, run an authorized investigation, or handle an estate case you have the right to access. See [docs/legal.md](docs/legal.md).
+
+---
+
+## 5-minute start
 
 ```bash
+git clone https://github.com/instinctes/forensproto.git
+cd forensproto
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open **http://127.0.0.1:3000** (localhost only).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Check the setup strip on the home page (Hashcat / wordlist).
+2. Drop a wallet file onto the page — or open **Recovery**.
+3. Put real dictionaries in `wordlists/` yourself. The repo only ships [`wordlists/example.txt`](wordlists/example.txt) for a smoke test.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Full walkthrough: [docs/getting-started.md](docs/getting-started.md).
 
-## Learn More
+macOS `.app` build: [docs/macos-app.md](docs/macos-app.md).
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## What it actually does
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Area | Status |
+|---|---|
+| Bitcoin Core `wallet.dat`, Hashcat jobs, BIP39 / missing-word recovery, ECDSA nonce-reuse, hash-chained audit log, signed case dossier | **Core — real** |
+| OSINT, chain tracer, file carver, stego, memory scan | **Lite — local, limited** |
+| Visual Key, vanity addresses, pattern scan | **Research** — labelled in the UI |
+| Distributed agents, RBAC, Vast.ai listing | **Optional / advanced** |
+| AI assistant | **Optional** — local [Ollama](https://ollama.com) |
 
-## Deploy on Vercel
+This is a single-user workbench, not a hosted SaaS and not a court-certified appliance out of the box.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Prerequisites
+
+| Tool | Need it? |
+|---|---|
+| **Node.js** ≥ 20 (22.5+ recommended) | yes |
+| **Hashcat** | yes, for recovery |
+| **Python 3.8+** | yes, for hash extraction scripts |
+| **Ollama** | optional |
+| GPU (NVIDIA / AMD / Apple) | optional, faster Hashcat |
+
+```bash
+# macOS
+brew install node hashcat python
+```
+
+---
+
+## Configuration
+
+```bash
+cp .env.example .env.local
+```
+
+Auth is **off** until you set `FORENSPROTO_AUTH=enabled`. Jobs, the audit log, and uploads stay under `.forensproto/` (gitignored) unless you set `FORENSPROTO_DATA_DIR`.
+
+Do **not** run `npm audit fix --force` — it can downgrade Next.js to an incompatible major.
+
+---
+
+## Tests
+
+```bash
+npm test              # Vitest
+npx tsc --noEmit
+npm run lint
+```
+
+---
+
+## Contribute
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Never commit wallets, seeds, potfiles, or bulk wordlists.
+
+---
+
+## License
+
+[MIT](LICENSE) — plus the acceptable-use note in that file and in [docs/legal.md](docs/legal.md).

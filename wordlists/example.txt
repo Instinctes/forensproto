@@ -1,0 +1,10 @@
+password
+Password1
+123456
+qwerty
+letmein
+bitcoin
+wallet
+changeme
+admin
+secret

@@ -1,0 +1,73 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "ForensProto",
+  "version": "1.0.0",
+  "identifier": "com.forensproto.desktop",
+  "build": {
+    "beforeBuildCommand": "npm run build && bash packaging/prepare-bundle.sh",
+    "beforeDevCommand": "PORT=38217 npm run dev",
+    "devUrl": "http://localhost:38217",
+    "frontendDist": "../ui"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "label": "splash",
+        "title": "ForensProto",
+        "url": "splash.html",
+        "width": 640,
+        "height": 420,
+        "resizable": false,
+        "center": true,
+        "visible": true,
+        "decorations": true
+      },
+      {
+        "label": "main",
+        "title": "ForensProto",
+        "url": "http://localhost:38217",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1024,
+        "minHeight": 700,
+        "visible": false,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app", "dmg"],
+    "publisher": "ForensProto",
+    "copyright": "MIT — nur für legale, forensische Zwecke",
+    "category": "DeveloperTool",
+    "shortDescription": "Lokale DFIR- & Krypto-Wallet-Recovery-Plattform",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns"
+    ],
+    "resources": [
+      "resources/app"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "10.15",
+      "entitlements": "entitlements.plist"
+    }
+  },
+  "plugins": {
+    "updater": {
+      "active": false,
+      "endpoints": [
+        "https://raw.githubusercontent.com/OWNER/ForensProto/main/packaging/updater/latest.json"
+      ],
+      "dialog": true,
+      "pubkey": "REPLACE_WITH_TAURI_UPDATER_PUBKEY"
+    }
+  }
+}
