@@ -90,6 +90,16 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). N
 
 ---
 
+## Support
+
+If this workbench is useful and you want to support it, Bitcoin donations are welcome:
+
+```
+1HuXWCLpdpJZvfy4GKu39RMtVg6pgUCPHA
+```
+
+Optional. No perk, no account, nothing uploaded.
+
 ## License
 
 [MIT](LICENSE) — plus the acceptable-use note in that file and in [docs/legal.md](docs/legal.md).
